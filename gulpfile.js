@@ -1,0 +1,133 @@
+// adapt code and on top of Chart.js
+
+var gulp = require('gulp');
+var browserify = require('browserify');
+var source = require('vinyl-source-stream');
+var insert = require('gulp-insert');
+var streamify = require('gulp-streamify');
+var replace = require('gulp-replace');
+var concat = require('gulp-concat');
+var uglify = require('uglify-js');
+var minifier = require('gulp-uglify/minifier');
+var collapse = require('bundle-collapser/plugin');
+var package = require('./package.json');
+var karma = require('gulp-karma');
+var argv = require('yargs').argv;
+var jsdoc = require('gulp-jsdoc3');
+var babel = require('gulp-babel');
+
+var srcDir = './src/';
+var outDir = './dist/';
+
+var header = "/*!\n" +
+	" * Basejit.js\n" +
+	" * https://wasin.io/\n" +
+	" * Version: {{ version }}\n" +
+	" *\n" +
+	" * Copyright 2016 Wasin.io\n" +
+	" * Released under the MIT license\n" +
+	" * https://github.com/haxpor/basejit/blob/master/LICENSE.md\n" +
+	" */\n";
+
+var preTestFiles = [
+];
+
+var testFiles = [
+	'./test/*.js'
+];
+
+/**
+ * Tasks
+ */
+gulp.task('build', ['buildInitial'], buildCombinedTask);
+gulp.task('buildInitial', buildInitialTask);
+gulp.task('buildNormal', buildNormalTask);
+gulp.task('buildMinified', buildMinifiedTask);
+gulp.task('unittest', unittestTask);
+gulp.task('unittestFull', unittestFullTask);
+gulp.task('doc', docTask);
+
+function startTest() {
+	return [].concat(preTestFiles).concat([
+			'./src/**/*.js',
+			'./test/mockContext.js'
+		]).concat(
+			argv.inputs?
+			argv.inputs.split(';'):
+			testFiles
+		);
+}
+
+function unittestTask() {
+	return gulp.src(startTest())
+		.pipe(karma({
+			configFile: 'karma.conf.fast.js',
+			action: 'run'
+		}));
+}
+
+function unittestFullTask() {
+	return gulp.src(startTest())
+		.pipe(karma({
+			configFile: 'karma.conf.js',
+			action: 'run'
+		}));
+}
+
+function buildInitialTask() {
+	// build normal version
+	var bundled = browserify('./src/basejit.js', { standalone: 'Basejit' })
+		.plugin(collapse)
+		.bundle()
+		.pipe(source('Basejit-es6.js'))
+		.pipe(insert.prepend(header))
+		.pipe(streamify(replace('{{ version }}', package.version)))
+		.pipe(gulp.dest(outDir));
+
+	return bundled;
+}
+
+function buildCombinedTask() {
+	buildNormalTask();
+	buildMinifiedTask();
+}
+
+function buildNormalTask() {
+	// build minified version
+	var options = {
+		preserveComments: 'license'
+	};
+
+	// TODO: Whenever gulp-uglify support es6, then we update this to just chain (pipe) and use uglify directly from gulp-uglify
+	// but for this instance we need to convert it to es2015 first before minify and uglify
+	return gulp.src('dist/Basejit-es6.js')
+		.pipe(babel({
+			presets: ['es2015']
+		}))
+		.pipe(streamify(replace('{{ version }}', package.version)))
+		.pipe(streamify(concat('Basejit.js')))
+		.pipe(gulp.dest(outDir));
+}
+
+function buildMinifiedTask() {
+	// build minified version
+	var options = {
+		preserveComments: 'license'
+	};
+
+	// TODO: Whenever gulp-uglify support es6, then we update this to just chain (pipe) and use uglify directly from gulp-uglify
+	// but for this instance we need to convert it to es2015 first before minify and uglify
+	return gulp.src('dist/Basejit-es6.js')
+		.pipe(babel({
+			presets: ['es2015']
+		}))
+		.pipe(minifier(options, uglify))
+		.pipe(streamify(replace('{{ version }}', package.version)))
+		.pipe(streamify(concat('Basejit.min.js')))
+		.pipe(gulp.dest(outDir));
+}
+
+function docTask(cb) {
+	return gulp.src(['README.md', './src/**/*.js'], {read: false})
+		.pipe(jsdoc(cb));
+}
