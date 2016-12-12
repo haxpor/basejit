@@ -30,4 +30,4 @@ are for demonstration purpose and have skeleton code to set the whole project up
 
 # License
 
-See [LICENSE](https://github.com/haxpor/basejit/blob/master/LICENSE.md).
+See [LICENSE](https://github.com/haxpor/basejit/blob/master/LICENSE).
