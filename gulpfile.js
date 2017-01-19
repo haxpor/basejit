@@ -15,6 +15,7 @@ var karma = require('gulp-karma');
 var argv = require('yargs').argv;
 var jsdoc = require('gulp-jsdoc3');
 var babel = require('gulp-babel');
+var rimraf = require('rimraf');
 
 var srcDir = './src/';
 var outDir = './dist/';
@@ -128,6 +129,10 @@ function buildMinifiedTask() {
 }
 
 function docTask(cb) {
-	return gulp.src(['README.md', './src/**/*.js'], {read: false})
-		.pipe(jsdoc(cb));
+	var config = require('./jsdocConfig.json');
+	// delete docs folder first
+	rimraf(config.opts.destination, function() {
+		return gulp.src(['README.md', './src/**/*.js'], {read: false})
+			.pipe(jsdoc(config));
+  });
 }
