@@ -10,7 +10,7 @@ It mainly uses
 * karma + jasmine - for test suite
 * gulp - for project management and command lines which included `gulp build`, `gulp unittest` and `gulp doc`.
 
-basejit has `package.json` which is description file for Node project. But basejit itself didn't publish on NPM registry.
+basejit has `package.json` which is description file for Node project. But basejit itself wasn't published on NPM registry.
 This is to allow users to modify the description, scripts, and necessary fields in `package.json` to match their needs to publish the final integrated project with basejit.
 
 Existing source files
@@ -24,9 +24,7 @@ are for demonstration purpose and have skeleton code to set the whole project up
 
 # Usage
 
-1. Do `git clone git@github.com:haxpor/basejit.git` to your local system.
-2. Modify `package.json` and add client code as need.
-3. (optional) Publish to NPM registry as your own Node project.
+Use [basejit-cli](https://github.com/haxpor/basejit-cli) to create a startup project based on basejit for you.
 
 # License
 
