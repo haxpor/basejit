@@ -1,5 +1,5 @@
 /**
- * @namespace basejit
+ * @namespace Basejit
  */
 
 // -- basejit -- //

@@ -4,9 +4,13 @@
   "description": "Your project description here",
   "main": "lib/basejit.js",
   "scripts": {
+    "prepublish": "npm run build",
+    "build": "./node_modules/.bin/rimraf lib/* && ./node_modules/.bin/babel src -d lib && gulp build",
     "test": "gulp unittest",
-    "compile": "./node_modules/.bin/rimraf lib/* && ./node_modules/.bin/babel src -d lib && gulp build",
-    "prepublish": "npm run compile"
+    "docs": "gulp doc",
+    "start": "gulp buildDev && npm run http-and-watch",
+    "http-and-watch": "./node_modules/.bin/lite-server & gulp watch",
+    "clean": "./node_modules/.bin/rimraf dist/* && ./node_modules/.bin/rimraf lib/* && ./node_modules/.bin/rimraf docs/*"
   },
   "repository": {
     "type": "git",
@@ -45,6 +49,7 @@
     "karma-jasmine": "^1.0.2",
     "karma-jasmine-html-reporter": "^0.2.2",
     "karma-spec-reporter": "0.0.26",
+    "lite-server": "^2.2.2",
     "remove": "^0.1.5",
     "rimraf": "^2.5.4",
     "source-map": "^0.5.6",

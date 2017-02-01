@@ -8,6 +8,15 @@ describe("basejit's core tests", function() {
         expect(Basejit.util.returnHelloWorld()).toEqual("Hello World");
     });
 
+    it("should validate promise-returned member function", function(done) {
+    	Basejit.util.returnPromise()
+    		.then((result) => {
+    			done();
+    		}, (e) => {
+    			console.log(e);
+    		})
+    });
+
     it("should have 'Dynamic Text' as value of dynamicText property", function() {
         expect(Basejit.dynamicText).toEqual("Dynamic Text");
     });

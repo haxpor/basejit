@@ -47,6 +47,8 @@ gulp.task('buildMinified', buildMinifiedTask);
 gulp.task('unittest', unittestTask);
 gulp.task('unittestFull', unittestFullTask);
 gulp.task('doc', docTask);
+gulp.task('buildDev', ['buildInitial'], buildDevTask);
+gulp.task('watch', watchTask);
 
 function startTest() {
 	return [].concat(preTestFiles).concat([
@@ -57,6 +59,28 @@ function startTest() {
 			argv.inputs.split(';'):
 			testFiles
 		);
+}
+
+function watchTask() {
+	var watcher = gulp.watch('./src/**/*.js', ['buildDev']);
+	watcher.on('change', function(event)
+  {
+      console.log('File ' + event.path + ' was ' + event.type + ', run \'buildDev\' task');
+  });
+}
+
+/**
+ * Build dev build task
+ * Dev build is non-minified, but babelified to ES2015.
+ */
+function buildDevTask() {
+	// it will show error if pipe babel() to above
+	return gulp.src('dist/Basejit-es6.js')
+		.pipe(babel({
+			presets: ['es2015']
+		}))
+		.pipe(streamify(concat('Basejit-dev-es5.js')))
+		.pipe(gulp.dest(outDir));
 }
 
 function unittestTask() {
@@ -77,20 +101,19 @@ function unittestFullTask() {
 
 function buildInitialTask() {
 	// build normal version
-	var bundled = browserify('./src/basejit.js', { standalone: 'Basejit' })
+	return browserify('./src/basejit.js', { standalone: 'Basejit' })
 		.plugin(collapse)
 		.bundle()
 		.pipe(source('Basejit-es6.js'))
 		.pipe(insert.prepend(header))
 		.pipe(streamify(replace('{{ version }}', package.version)))
 		.pipe(gulp.dest(outDir));
-
-	return bundled;
 }
 
 function buildCombinedTask() {
 	buildNormalTask();
 	buildMinifiedTask();
+	buildDevTask();
 }
 
 function buildNormalTask() {
