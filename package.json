@@ -1,6 +1,6 @@
 {
   "name": "basejit",
-  "version": "0.0.2",
+  "version": "0.0.1",
   "description": "Your project description here",
   "main": "lib/basejit.js",
   "scripts": {
