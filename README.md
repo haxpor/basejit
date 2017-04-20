@@ -30,7 +30,7 @@ Use [basejit-cli](https://github.com/haxpor/basejit-cli) to create a startup pro
 
 There's centralized commands that can be used on NPM as follows
 
-# Frequent Use
+# Frequently Use
 * `npm start` - to build dev version of distribution file (non-minified & non-uglified, ES2015 compatible), start local http server, and watch for file changes on `./src`. Go to `http://localhost:5050` to see the result on browser.
 * `npm run build` - to build all distribution file into `.dist`
 * `npm test` - to run unit test
